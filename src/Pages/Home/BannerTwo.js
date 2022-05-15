@@ -4,14 +4,14 @@ import PrimaryButton from "../Shared/PrimaryButton";
 
 const BannerTwo = () => {
   return (
-    <div class="hero min-h-screen">
-      <div class="hero-content flex-col lg:flex-row">
-        <img src={treatment} class="max-w-sm rounded-lg shadow-2xl" />
+    <div className="hero min-h-screen">
+      <div className="hero-content flex-col lg:flex-row">
+        <img src={treatment} className="max-w-sm rounded-lg shadow-2xl" />
         <div>
-          <h1 class="text-5xl font-bold">
+          <h1 className="text-5xl font-bold">
             Exceptional Dental Care, on Your Terms
           </h1>
-          <p class="py-6">
+          <p className="py-6">
             The doctor is the most remarkable profession in the World. A doctor
             treats every kind of disease, making us ready to work again. A sick
             person will certainly look for a nearby genuine Doctor. He gets
