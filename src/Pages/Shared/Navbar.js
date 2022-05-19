@@ -32,7 +32,7 @@ const Navbar = () => {
       </li>
       <li>
         {/* last code */}
-        {user? <button onClick={logout} class="btn btn-ghost">Sign Out</button> : <Link to="/login">Login</Link>}
+        {user? <button onClick={logout} className="btn btn-ghost">Sign Out</button> : <Link to="/login">Login</Link>}
       </li>
     </>
   );
