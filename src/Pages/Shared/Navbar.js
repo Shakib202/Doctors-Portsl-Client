@@ -79,11 +79,12 @@ const Navbar = () => {
           Doctors Portal
         </Link>
       </div>
-      <div className="navbar-end hidden lg:flex">
-        <ul className="menu menu-horizontal p-0">{menuItems}</ul>
-      </div>
-      <div className="navbar-center">
-        <label tabIndex="1" for="dashboard-sidebar" className="btn btn-ghost lg:hidden">
+      <div className="navbar-end">
+        <label
+          tabIndex="1"
+          for="dashboard-sidebar"
+          className="btn btn-ghost lg:hidden"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -99,6 +100,9 @@ const Navbar = () => {
             />
           </svg>
         </label>
+      </div>
+      <div className="navbar-end hidden lg:flex">
+        <ul className="menu menu-horizontal p-0">{menuItems}</ul>
       </div>
     </div>
   );
