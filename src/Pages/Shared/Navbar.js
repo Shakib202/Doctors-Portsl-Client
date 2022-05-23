@@ -11,6 +11,7 @@ const Navbar = () => {
 
   const logout = () => {
     signOut(auth);
+    localStorage.removeItem('accessToken');
   };
 
   const menuItems = (
@@ -82,7 +83,7 @@ const Navbar = () => {
       <div className="navbar-end">
         <label
           tabIndex="1"
-          for="dashboard-sidebar"
+          htmlFor="dashboard-sidebar"
           className="btn btn-ghost lg:hidden"
         >
           <svg
