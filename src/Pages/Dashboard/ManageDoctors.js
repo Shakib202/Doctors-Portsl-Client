@@ -11,7 +11,7 @@ const ManageDoctors = () => {
     isLoading,
     refetch,
   } = useQuery("doctors", () =>
-    fetch("https://git.heroku.com/sleepy-ocean-00034.git/doctor", {
+    fetch("https://sleepy-ocean-00034.herokuapp.com/doctor", {
       headers: {
         authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },

@@ -13,8 +13,8 @@ const AddDoctor = () => {
   } = useForm();
 
   const { data: services, isLoading } = useQuery("services", () =>
-    fetch("https://git.heroku.com/sleepy-ocean-00034.git/service").then(
-      (res) => res.json()
+    fetch("https://sleepy-ocean-00034.herokuapp.com/service").then((res) =>
+      res.json()
     )
   );
 
@@ -49,7 +49,7 @@ const AddDoctor = () => {
             img: img,
           };
           // send to your database
-          fetch("https://git.heroku.com/sleepy-ocean-00034.git/doctor", {
+          fetch("https://sleepy-ocean-00034.herokuapp.com/doctor", {
             method: "POST",
             headers: {
               "content-type": "application/json",

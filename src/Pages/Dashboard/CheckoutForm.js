@@ -13,17 +13,14 @@ const CheckoutForm = ({ appointment }) => {
   const { _id, price, patient, patientName } = appointment;
 
   useEffect(() => {
-    fetch(
-      "https://git.heroku.com/sleepy-ocean-00034.git/create-payment-intent",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: JSON.stringify({ price }),
-      }
-    )
+    fetch("https://sleepy-ocean-00034.herokuapp.com/create-payment-intent", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+      body: JSON.stringify({ price }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data?.clientSecret) {
@@ -84,7 +81,7 @@ const CheckoutForm = ({ appointment }) => {
         transactionId: paymentIntent.id,
       };
 
-      fetch(`https://git.heroku.com/sleepy-ocean-00034.git/booking/${_id}`, {
+      fetch(`https://sleepy-ocean-00034.herokuapp.com/booking/${_id}`, {
         method: "PATCH",
         headers: {
           "content-type": "application/json",
