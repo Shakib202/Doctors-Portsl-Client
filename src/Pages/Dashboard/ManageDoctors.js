@@ -11,7 +11,7 @@ const ManageDoctors = () => {
     isLoading,
     refetch,
   } = useQuery("doctors", () =>
-    fetch("http://localhost:5000/doctor", {
+    fetch("https://git.heroku.com/sleepy-ocean-00034.git/doctor", {
       headers: {
         authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
@@ -49,7 +49,13 @@ const ManageDoctors = () => {
           </tbody>
         </table>
       </div>
-      {deletingDoctor && <DeleteConfirmModal deletingDoctor={deletingDoctor} refetch={refetch}  setDeletingDoctor={setDeletingDoctor} />}
+      {deletingDoctor && (
+        <DeleteConfirmModal
+          deletingDoctor={deletingDoctor}
+          refetch={refetch}
+          setDeletingDoctor={setDeletingDoctor}
+        />
+      )}
     </div>
   );
 };

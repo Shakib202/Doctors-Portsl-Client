@@ -9,64 +9,65 @@ const AddDoctor = () => {
     register,
     formState: { errors },
     handleSubmit,
-    reset
+    reset,
   } = useForm();
 
   const { data: services, isLoading } = useQuery("services", () =>
-    fetch("http://localhost:5000/service").then((res) => res.json())
+    fetch("https://git.heroku.com/sleepy-ocean-00034.git/service").then(
+      (res) => res.json()
+    )
   );
 
-  const imageStorageKey = 'd945bce10565d23c0aa7c6ac733c97bf';
+  const imageStorageKey = "d945bce10565d23c0aa7c6ac733c97bf";
 
   /*
-  * 3 ways to store images
-  * (1) Third party storage //Free open public storage is ok for Practice project
-  * (2) Your own storage in your own server (file system)
-  * (3) Database: Mongodb
-  * 
-  * YUP: to validate file: search: Yup file validation for react hook form
-  */
+   * 3 ways to store images
+   * (1) Third party storage //Free open public storage is ok for Practice project
+   * (2) Your own storage in your own server (file system)
+   * (3) Database: Mongodb
+   *
+   * YUP: to validate file: search: Yup file validation for react hook form
+   */
 
   const onSubmit = async (data) => {
     const image = data.image[0];
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append("image", image);
     const url = `https://api.imgbb.com/1/upload?key=${imageStorageKey}`;
-    fetch(url,{
-      method: 'POST',
-      body: formData
+    fetch(url, {
+      method: "POST",
+      body: formData,
     })
-    .then(res => res.json())
-    .then(result => {
-      if(result.success){
-        const img = result.data.url;
-        const doctor = {
-          name: data.name,
-          email: data.email,
-          specialty: data.specialty,
-          img: img
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          const img = result.data.url;
+          const doctor = {
+            name: data.name,
+            email: data.email,
+            specialty: data.specialty,
+            img: img,
+          };
+          // send to your database
+          fetch("https://git.heroku.com/sleepy-ocean-00034.git/doctor", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+            body: JSON.stringify(doctor),
+          })
+            .then((res) => res.json())
+            .then((inserted) => {
+              if (inserted.insertedId) {
+                toast.success("Doctor added successfully");
+                reset();
+              } else {
+                toast.error("Failed to add the doctor");
+              }
+            });
         }
-        // send to your database
-        fetch('http://localhost:5000/doctor', {
-          method: 'POST',
-          headers: {
-            'content-type' : 'application/json',
-            authorization: `Bearer ${localStorage.getItem('accessToken')}`
-          },
-          body: JSON.stringify(doctor)
-        })
-        .then(res => res.json())
-        .then(inserted => {
-          if(inserted.insertedId){
-            toast.success('Doctor added successfully')
-            reset();
-          }
-          else{
-            toast.error('Failed to add the doctor');
-          }
-        })
-      }
-    })
+      });
   };
 
   if (isLoading) {
@@ -139,7 +140,10 @@ const AddDoctor = () => {
           <label className="label">
             <span className="label-text">Specialty</span>
           </label>
-          <select {...register("specialty")} className="select input-bordered w-full max-w-xs">
+          <select
+            {...register("specialty")}
+            className="select input-bordered w-full max-w-xs"
+          >
             {services.map((service) => (
               <option key={service._id} value={service.name}>
                 {service.name}

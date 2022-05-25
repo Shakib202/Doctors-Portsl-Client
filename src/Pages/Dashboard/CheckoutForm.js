@@ -2,30 +2,35 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
 
 // comes from Payment.js
-const CheckoutForm = ({appointment}) => {
+const CheckoutForm = ({ appointment }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const [cardError, setCardError] = useState();
+  const [cardError, setCardError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
+  const { _id, price, patient, patientName } = appointment;
 
-  const {price} = appointment;
-
-  useEffect(()=>{
-    fetch('http://localhost:5000/create-payment-intent',{
-      method: 'POST',
-      headers: {
-        'content-type' : 'application/json',
-        'authorization': `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-      body:JSON.stringify({price})
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data?.clientSecret){
-        setClientSecret(data.clientSecret);
+  useEffect(() => {
+    fetch(
+      "https://git.heroku.com/sleepy-ocean-00034.git/create-payment-intent",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({ price }),
       }
-    });
-  },[price])
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.clientSecret) {
+          setClientSecret(data.clientSecret);
+        }
+      });
+  }, [price]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,6 +54,49 @@ const CheckoutForm = ({appointment}) => {
       setCardError(error.message);
     } else {
       setCardError("");
+    }
+    setSuccess("");
+    setProcessing(true);
+
+    // confirm card payment (google => https://stripe.com/docs/js/payment_intents/confirm_card_payment)
+    const { paymentIntent, error: intentError } =
+      await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: card,
+          billing_details: {
+            name: patientName,
+            email: patient,
+          },
+        },
+      });
+    if (intentError) {
+      setCardError(intentError?.message);
+      setProcessing(false);
+    } else {
+      setCardError("");
+      setTransactionId(paymentIntent.id);
+      console.log(paymentIntent);
+      setSuccess("Congrats! Your payment is completed.");
+
+      // store payment on database
+      const payment = {
+        appointment: _id,
+        transactionId: paymentIntent.id,
+      };
+
+      fetch(`https://git.heroku.com/sleepy-ocean-00034.git/booking/${_id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify(payment),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setProcessing(false);
+          console.log(data);
+        });
     }
   };
 
@@ -79,9 +127,16 @@ const CheckoutForm = ({appointment}) => {
           Pay
         </button>
       </form>
-      {
-        cardError && <p className="text-red-500">{cardError}</p>
-      }
+      {cardError && <p className="text-red-500">{cardError}</p>}
+      {success && (
+        <div className="text-green-500">
+          <p>{success}</p>
+          <p>
+            Your transaction Id:{" "}
+            <span className="text-orange-500 font-bold">{transactionId}</span>
+          </p>
+        </div>
+      )}
     </>
   );
 };
